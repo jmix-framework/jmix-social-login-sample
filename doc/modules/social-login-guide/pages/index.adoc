@@ -351,7 +351,6 @@ private Collection<GrantedAuthority> getDefaultGrantedAuthorities() {
     return List.of(authorityUtils.createResourceRoleGrantedAuthority(FullAccessRole.CODE));
 }
 ----
-
 [add-ui-login]
 === Add login UI logic
 Open `login-view.xml` descriptor and add login buttons just below the `loginForm` element.
