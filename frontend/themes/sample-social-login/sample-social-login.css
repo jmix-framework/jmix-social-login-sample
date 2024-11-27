@@ -1,0 +1,74 @@
+/* Define your styles here */
+
+.login-wrapper {
+    padding: var(--lumo-space-l);
+    max-width: calc(var(--lumo-size-m) * 10);
+    background: var(--lumo-base-color) linear-gradient(var(--lumo-tint-5pct), var(--lumo-tint-5pct));
+}
+
+.other-login-header {
+    color: var(--lumo-contrast-80pct);
+    width: calc(var(--lumo-size-m) * 10);
+    overflow: hidden;
+    text-align: center;
+}
+
+.other-login-header::before {
+    content: '';
+    display: inline-block;
+    border-bottom: 1px solid;
+    color: var(--lumo-contrast-40pct);
+    width: 50%;
+    margin: 0 0.5em 0 -55%;
+    vertical-align: middle;
+}
+
+.other-login-header::after {
+    content: '';
+    display: inline-block;
+    border-bottom: 1px solid;
+    color: var(--lumo-contrast-40pct);
+    margin: 0 -55% 0 0.5em;
+    vertical-align: middle;
+    width: 50%;
+}
+
+.other-login-button {
+    color: var(--lumo-contrast-80pct);
+}
+
+.google-style vaadin-icon {
+    color: #4285F4;
+    width: var(--lumo-icon-size-s);
+    height: var(--lumo-icon-size-s);
+}
+
+.github-style vaadin-icon {
+    color: 	black;
+    width: var(--lumo-icon-size-s);
+    height: var(--lumo-icon-size-s);
+}
+
+.yandex-style vaadin-icon {
+    color: #FC3F1D;
+    width: var(--lumo-icon-size-s);
+    height: var(--lumo-icon-size-s);
+}
+
+.discord-style vaadin-icon {
+    color: #5865F2;
+    width: var(--lumo-icon-size-s);
+    height: var(--lumo-icon-size-s);
+}
+
+.facebook-style vaadin-icon {
+    color: #17A9FD;
+    width: var(--lumo-icon-size-s);
+    height: var(--lumo-icon-size-s);
+}
+
+.vk-style vaadin-icon {
+    color: #45668e;
+    width: var(--lumo-icon-size-s);
+    height: var(--lumo-icon-size-s);
+}
