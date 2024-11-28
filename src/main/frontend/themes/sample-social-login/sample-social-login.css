@@ -1,5 +1,3 @@
-/* Define your styles here */
-
 .login-wrapper {
     padding: var(--lumo-space-l);
     max-width: calc(var(--lumo-size-m) * 10);
@@ -45,30 +43,6 @@
 
 .github-style vaadin-icon {
     color: 	black;
-    width: var(--lumo-icon-size-s);
-    height: var(--lumo-icon-size-s);
-}
-
-.yandex-style vaadin-icon {
-    color: #FC3F1D;
-    width: var(--lumo-icon-size-s);
-    height: var(--lumo-icon-size-s);
-}
-
-.discord-style vaadin-icon {
-    color: #5865F2;
-    width: var(--lumo-icon-size-s);
-    height: var(--lumo-icon-size-s);
-}
-
-.facebook-style vaadin-icon {
-    color: #17A9FD;
-    width: var(--lumo-icon-size-s);
-    height: var(--lumo-icon-size-s);
-}
-
-.vk-style vaadin-icon {
-    color: #45668e;
     width: var(--lumo-icon-size-s);
     height: var(--lumo-icon-size-s);
 }

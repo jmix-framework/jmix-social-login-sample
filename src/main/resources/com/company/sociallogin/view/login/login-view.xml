@@ -18,15 +18,23 @@
                           password="msg://loginForm.errorPassword"/>
         </loginForm>
 
+        <!-- tag::social[] -->
         <h3 text="msg://otherLogin.text" classNames="other-login-header"/>
 
         <vbox classNames="login-wrapper">
-            <button id="googleBtn" text="msg://googleBtn.text" width="100%" icon="app-icons:google"
+            <button id="googleBtn"
+                    text="Sign in with Google"
+                    width="100%"
+                    icon="app-icons:google"
                     disableOnClick="true"
                     classNames="google-style, other-login-button"/>
-            <button id="githubBtn" text="msg://githubBtn.text" width="100%" icon="app-icons:github"
+            <button id="githubBtn"
+                    text="Sign in with GitHub"
+                    width="100%"
+                    icon="app-icons:github"
                     disableOnClick="true"
                     classNames="github-style, other-login-button"/>
         </vbox>
+        <!-- end::social[] -->
     </layout>
 </view>

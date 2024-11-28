@@ -1,16 +1,13 @@
 package com.company.sociallogin.security;
 
-import com.company.sociallogin.entity.Account;
-import com.company.sociallogin.entity.AccountType;
+import com.company.sociallogin.entity.AuthenticationType;
 import com.company.sociallogin.entity.User;
-import io.jmix.core.DataManager;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.securityflowui.security.FlowuiVaadinWebSecurity;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,24 +26,21 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+// tag::class[]
 @EnableWebSecurity
 @Configuration
 public class OAuth2SecurityConfiguration extends FlowuiVaadinWebSecurity {
 
-    private static final Logger log = LoggerFactory.getLogger(OAuth2SecurityConfiguration.class);
-
-    private final RoleGrantedAuthorityUtils authorityUtils;
-    private final UnconstrainedDataManager unconstrainedDataManager;
-
-    public OAuth2SecurityConfiguration(RoleGrantedAuthorityUtils authorityUtils, UnconstrainedDataManager unconstrainedDataManager) {
-        this.authorityUtils = authorityUtils;
-        this.unconstrainedDataManager = unconstrainedDataManager;
-    }
-
+    @Autowired
+    private RoleGrantedAuthorityUtils authorityUtils;
+    @Autowired
+    private UnconstrainedDataManager dataManager;
+    // ...
+    // end::class[]
+    // tag::configure[]
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-
         http.oauth2Login(configurer ->
                 configurer
                         .loginPage(getLoginPath())
@@ -57,90 +51,97 @@ public class OAuth2SecurityConfiguration extends FlowuiVaadinWebSecurity {
                         .successHandler(this::onAuthenticationSuccess)
         );
     }
+    // end::configure[]
 
+    // tag::onAuthenticationSuccess[]
     private void onAuthenticationSuccess(HttpServletRequest request,
                                          HttpServletResponse response,
                                          Authentication authentication) throws IOException {
-        // redirect to the main screen after successful authentication using auth provider
+        // Redirect to the main view after successful authentication
         new DefaultRedirectStrategy().sendRedirect(request, response, "/");
     }
+    // end::onAuthenticationSuccess[]
 
-    private User getOrCreateUser(String accountIdent, String providerId, String email, String[] names) {
-        AccountType accountType = AccountType.fromId(providerId);
-        if (accountType == null) {
-            throw new UnknownAuthProviderException(providerId);
-        }
-        User jmixUser = unconstrainedDataManager.load(User.class)
-                .query("select u from User u join u.accounts a where (a.ident = :accountIdent and a.type = :accountType) or u.email = :email")
-                .parameter("accountIdent", accountIdent)
-                .parameter("accountType", accountType)
-                .parameter("email", email)
-                .optional()
-                .orElseGet(() -> {
-                    User user = unconstrainedDataManager.create(User.class);
-                    user.setEmail(email);
-                    return user;
-                });
-        jmixUser.setUsername(email != null ? email : accountIdent);
-        if (names.length > 1) {
-            jmixUser.setFirstName(names[0]);
-            jmixUser.setLastName(names[1]);
-        }
-        jmixUser = unconstrainedDataManager.save(jmixUser);
-        if (! jmixUser.getAccounts().stream().anyMatch(a -> a.getType().equals(AccountType.fromId(providerId)))) {
-            Account account = unconstrainedDataManager.create(Account.class);
-            account.setType(AccountType.fromId(providerId));
-            account.setIdent(accountIdent);
-            account.setUser(jmixUser);
-            account = unconstrainedDataManager.save(account);
-            jmixUser.getAccounts().add(account);
-        }
-        if (jmixUser.getAuthorities().isEmpty()) {
-            jmixUser.setAuthorities(getDefaultGrantedAuthorities());
-        }
-        return jmixUser;
-    }
-
-    /**
-     * Service responsible for loading OAuth2 users
-     */
+    // tag::oauth2UserService[]
+    // Returns a method that loads GitHub users
     private OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
         DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
         return (userRequest) -> {
+            // Delegate to the default implementation to load an external user
             OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-            Integer id = oAuth2User.getAttribute("id");
-            String accountIdent = String.valueOf(id);
-            String registrationId = userRequest.getClientRegistration().getRegistrationId();
-            String email = oAuth2User.getAttribute("email");
-            String name = oAuth2User.getAttribute("name");
-            String[] names = name.split(" ");
+            // Find or create a user with username equal to the GitHub ID
+            Integer githubId = oAuth2User.getAttribute("id");
+            User jmixUser = loadUserByUsername(String.valueOf(githubId));
 
-            return getOrCreateUser(accountIdent, registrationId, email, names);
+            // Update the user with information from GitHub
+            jmixUser.setAuthenticationType(AuthenticationType.GITHUB);
+            jmixUser.setEmail(oAuth2User.getAttribute("email"));
+            String nameAttr = oAuth2User.getAttribute("name");
+            if (nameAttr != null) {
+                int idx = nameAttr.indexOf(" ");
+                if (idx > 0) {
+                    jmixUser.setFirstName(nameAttr.substring(0, idx));
+                    jmixUser.setLastName(nameAttr.substring(idx + 1));
+                } else {
+                    jmixUser.setLastName(nameAttr);
+                }
+            }
+
+            // Save the user to the database and assign roles
+            User savedJmixUser = dataManager.save(jmixUser);
+            savedJmixUser.setAuthorities(getDefaultGrantedAuthorities());
+            return savedJmixUser;
         };
     }
+    // end::oauth2UserService[]
 
-    /**
-     * Service responsible for loading OIDC users (Google uses OIDC protocol)
-     */
+    // tag::oidcUserService[]
+    // Returns a method that loads Google users
     private OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService() {
         OidcUserService delegate = new OidcUserService();
         return (userRequest) -> {
+            // Delegate to the default implementation to load an external user
             OidcUser oidcUser = delegate.loadUser(userRequest);
 
-            String accountIdent = oidcUser.getSubject();
-            String registrationId = userRequest.getClientRegistration().getRegistrationId();
-            String email = oidcUser.getEmail();
-            String[] names = new String[] { oidcUser.getAttribute("given_name"), oidcUser.getAttribute("family_name") };
+            // Find or create a user with username equal to the Google ID
+            String googleId = oidcUser.getSubject();
+            User jmixUser = loadUserByUsername(googleId);
 
-            return getOrCreateUser(accountIdent, registrationId, email, names);
+            // Update the user with information from Google
+            jmixUser.setAuthenticationType(AuthenticationType.GOOGLE);
+            jmixUser.setEmail(oidcUser.getEmail());
+            jmixUser.setFirstName(oidcUser.getAttribute("given_name"));
+            jmixUser.setLastName(oidcUser.getAttribute("family_name"));
+
+            // Update the user to the database and assign roles
+            User savedJmixUser = dataManager.save(jmixUser);
+            savedJmixUser.setAuthorities(getDefaultGrantedAuthorities());
+            return savedJmixUser;
         };
     }
+    // end::oidcUserService[]
 
-    /**
-     * Builds granted authority list that grants access to the FullAccess role
-     */
-    private Collection<GrantedAuthority> getDefaultGrantedAuthorities() {
-        return List.of(authorityUtils.createResourceRoleGrantedAuthority(FullAccessRole.CODE));
+    // tag::loadUserByUsername[]
+    // Loads user by username or creates a new user
+    private User loadUserByUsername(String username) {
+        return dataManager.load(User.class)
+                .query("e.username = ?1", username)
+                .optional()
+                .orElseGet(() -> {
+                    User user = dataManager.create(User.class);
+                    user.setUsername(username);
+                    return user;
+                });
     }
+    // end::loadUserByUsername[]
+
+    // tag::getDefaultGrantedAuthorities[]
+    // Builds granted authority list to assign default roles to the user
+    private Collection<GrantedAuthority> getDefaultGrantedAuthorities() {
+        return List.of(
+                authorityUtils.createResourceRoleGrantedAuthority(FullAccessRole.CODE)
+        );
+    }
+    // end::getDefaultGrantedAuthorities[]
 }

@@ -8,22 +8,19 @@ import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.security.authentication.JmixUserDetails;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import jakarta.persistence.Version;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import org.springframework.security.core.GrantedAuthority;
+// tag::oidc-user[]
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+// ...
+// end::oidc-user[]
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @JmixEntity
@@ -31,41 +28,34 @@ import java.util.UUID;
 @Table(name = "USER_", indexes = {
         @Index(name = "IDX_USER__ON_USERNAME", columnList = "USERNAME", unique = true)
 })
-public class User extends JmixOidcUserEntity implements JmixUserDetails, HasTimeZone {
+// tag::user[]
+public class User implements JmixUserDetails, HasTimeZone, OidcUser {
+    // ...
+    // end::user[]
 
     @Id
     @Column(name = "ID", nullable = false)
     @JmixGeneratedValue
     private UUID id;
 
-    @OneToMany(mappedBy = "user")
-    private List<Account> accounts = new ArrayList<>();
-
     @Version
     @Column(name = "VERSION", nullable = false)
     private Integer version;
-
     @Column(name = "USERNAME", nullable = false)
     protected String username;
-
     @Secret
     @SystemLevel
     @Column(name = "PASSWORD")
     protected String password;
-
     @Column(name = "FIRST_NAME")
     protected String firstName;
-
     @Column(name = "LAST_NAME")
     protected String lastName;
-
     @Email
     @Column(name = "EMAIL")
     protected String email;
-
     @Column(name = "ACTIVE")
     protected Boolean active = true;
-
     @Column(name = "TIME_ZONE_ID")
     protected String timeZoneId;
 
@@ -77,13 +67,40 @@ public class User extends JmixOidcUserEntity implements JmixUserDetails, HasTime
     @Transient
     protected Collection<? extends GrantedAuthority> authorities;
 
-    public List<Account> getAccounts() {
-        return accounts;
+    // tag::auth-type[]
+    @Column(name = "AUTHENTICATION_TYPE", length = 10)
+    private String authenticationType;
+
+    public AuthenticationType getAuthenticationType() {
+        return authenticationType == null ? null : AuthenticationType.fromId(authenticationType);
     }
 
-    public void setAccounts(List<Account> accounts) {
-        this.accounts = accounts;
+    public void setAuthenticationType(AuthenticationType authenticationType) {
+        this.authenticationType = authenticationType == null ? null : authenticationType.getId();
     }
+    // end::auth-type[]
+
+    // tag::oidc-user[]
+    @Override
+    public OidcUserInfo getUserInfo() {
+        return null;
+    }
+
+    @Override
+    public OidcIdToken getIdToken() {
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> getClaims() {
+        return null;
+    }
+    // end::oidc-user[]
 
     public UUID getId() {
         return id;

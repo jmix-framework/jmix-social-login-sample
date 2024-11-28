@@ -1,5 +1,5 @@
 # Jmix Social Login Sample
 
-This project demonstrates integration a Jmix application with an external OAuth, OpenID Connect authentication providers
+This project demonstrates usage of Google and GitHub social login providers in a Jmix application.
 
-See the complete explanation in https://docs.jmix.io/jmix/social-login-guide/index.html guide.
+See the complete explanation in the [Social Login](https://docs.jmix.io/jmix/social-login-guide/index.html) guide.

@@ -5,14 +5,15 @@ import io.jmix.core.metamodel.datatype.EnumClass;
 import org.springframework.lang.Nullable;
 
 
-public enum AccountType implements EnumClass<String> {
+public enum AuthenticationType implements EnumClass<String> {
 
-    GOOGLE("google"),
-    GITHUB("github");
+    APP("APP"),
+    GOOGLE("GOOGLE"),
+    GITHUB("GITHUB");
 
     private final String id;
 
-    AccountType(String id) {
+    AuthenticationType(String id) {
         this.id = id;
     }
 
@@ -21,8 +22,8 @@ public enum AccountType implements EnumClass<String> {
     }
 
     @Nullable
-    public static AccountType fromId(String id) {
-        for (AccountType at : AccountType.values()) {
+    public static AuthenticationType fromId(String id) {
+        for (AuthenticationType at : AuthenticationType.values()) {
             if (at.getId().equals(id)) {
                 return at;
             }
