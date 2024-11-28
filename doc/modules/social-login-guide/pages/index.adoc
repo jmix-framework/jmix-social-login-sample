@@ -179,22 +179,6 @@ include::example$src/main/java/com/company/sociallogin/entity/User.java[tags=use
 
 The `OidcUser` methods are not used in the application, so you can leave their implementations empty.
 
-The next step is to add an attribute that will indicate what service authenticates this user: built-in application security, Google or GitHub.
-
-Create an `AuthenticationType` enumeration:
-
-[source, java]
-----
-include::example$src/main/java/com/company/sociallogin/entity/AuthenticationType.java[]
-----
-
-Then add the `authenticationType` attribute to the `User` entity:
-
-[source, java]
-----
-include::example$src/main/java/com/company/sociallogin/entity/User.java[tags=user;auth-type]
-----
-
 [[configure-oauth2-login]]
 == Configure OAuth2 Login
 

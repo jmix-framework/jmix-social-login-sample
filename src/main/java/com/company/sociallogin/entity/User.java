@@ -67,19 +67,6 @@ public class User implements JmixUserDetails, HasTimeZone, OidcUser {
     @Transient
     protected Collection<? extends GrantedAuthority> authorities;
 
-    // tag::auth-type[]
-    @Column(name = "AUTHENTICATION_TYPE", length = 10)
-    private String authenticationType;
-
-    public AuthenticationType getAuthenticationType() {
-        return authenticationType == null ? null : AuthenticationType.fromId(authenticationType);
-    }
-
-    public void setAuthenticationType(AuthenticationType authenticationType) {
-        this.authenticationType = authenticationType == null ? null : authenticationType.getId();
-    }
-    // end::auth-type[]
-
     // tag::oidc-user[]
     @Override
     public OidcUserInfo getUserInfo() {

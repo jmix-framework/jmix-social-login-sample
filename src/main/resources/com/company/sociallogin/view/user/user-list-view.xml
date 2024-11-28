@@ -58,7 +58,6 @@
                 <action id="showUserSubstitutions" type="sec_showUserSubstitutions"/>
             </actions>
             <columns resizable="true">
-                <column property="authenticationType"/>
                 <column property="username"/>
                 <column property="firstName"/>
                 <column property="lastName"/>

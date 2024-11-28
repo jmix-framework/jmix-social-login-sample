@@ -1,6 +1,5 @@
 package com.company.sociallogin.security;
 
-import com.company.sociallogin.entity.AuthenticationType;
 import com.company.sociallogin.entity.User;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
@@ -70,12 +69,11 @@ public class OAuth2SecurityConfiguration extends FlowuiVaadinWebSecurity {
             // Delegate to the default implementation to load an external user
             OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-            // Find or create a user with username equal to the GitHub ID
+            // Find or create a user with username corresponding to the GitHub ID
             Integer githubId = oAuth2User.getAttribute("id");
-            User jmixUser = loadUserByUsername(String.valueOf(githubId));
+            User jmixUser = loadUserByUsername("[github]" + githubId);
 
             // Update the user with information from GitHub
-            jmixUser.setAuthenticationType(AuthenticationType.GITHUB);
             jmixUser.setEmail(oAuth2User.getAttribute("email"));
             String nameAttr = oAuth2User.getAttribute("name");
             if (nameAttr != null) {
@@ -104,12 +102,11 @@ public class OAuth2SecurityConfiguration extends FlowuiVaadinWebSecurity {
             // Delegate to the default implementation to load an external user
             OidcUser oidcUser = delegate.loadUser(userRequest);
 
-            // Find or create a user with username equal to the Google ID
+            // Find or create a user with username corresponding to the Google ID
             String googleId = oidcUser.getSubject();
-            User jmixUser = loadUserByUsername(googleId);
+            User jmixUser = loadUserByUsername("[google]" + googleId);
 
             // Update the user with information from Google
-            jmixUser.setAuthenticationType(AuthenticationType.GOOGLE);
             jmixUser.setEmail(oidcUser.getEmail());
             jmixUser.setFirstName(oidcUser.getAttribute("given_name"));
             jmixUser.setLastName(oidcUser.getAttribute("family_name"));
