@@ -71,7 +71,7 @@ public class OAuth2SecurityConfiguration extends FlowuiVaadinWebSecurity {
 
             // Find or create a user with username corresponding to the GitHub ID
             Integer githubId = oAuth2User.getAttribute("id");
-            User jmixUser = loadUserByUsername("[github]" + githubId);
+            User jmixUser = loadUserByUsername("github:" + githubId);
 
             // Update the user with information from GitHub
             jmixUser.setEmail(oAuth2User.getAttribute("email"));
@@ -104,7 +104,7 @@ public class OAuth2SecurityConfiguration extends FlowuiVaadinWebSecurity {
 
             // Find or create a user with username corresponding to the Google ID
             String googleId = oidcUser.getSubject();
-            User jmixUser = loadUserByUsername("[google]" + googleId);
+            User jmixUser = loadUserByUsername("google:" + googleId);
 
             // Update the user with information from Google
             jmixUser.setEmail(oidcUser.getEmail());
