@@ -1,3 +1,5 @@
+:sample-project: jmix-social-login-sample
+
 = Social Login
 
 Jmix offers a comprehensive security subsystem that includes user management features out of the box. This built-in functionality allows developers to implement a variety of authentication methods while also providing the flexibility to integrate custom solutions. Among these options, Jmix supports integration with third-party services, such as LDAP/Active Directory servers and OpenID Connect providers.
@@ -18,14 +20,18 @@ To effectively use this guide, you will need the following:
 
 . xref:ROOT:setup.adoc[Setup] the development environment.
 
-. If you don't want to follow the guide step-by-step, you can download or clone the https://github.com/jmix-framework/jmix-social-login-sample[completed sample project^]:
+. You can follow the guide step-by-step, or get the completed sample project to explore the finished implementation and experiment with the functionality.
+
+* Either https://github.com/jmix-framework/{sample-project}/archive/refs/heads/{page-origin-branch}.zip[download^] and unzip the source repository
+
+* Or clone it and switch to the `{page-origin-branch}` branch:
 +
-[source,shell]
+[source,subs=attributes+]
 ----
-git clone https://github.com/jmix-framework/jmix-social-login-sample.git
+git clone https://github.com/jmix-framework/{sample-project}
+cd {sample-project}
+git checkout {page-origin-branch}
 ----
-+
-This will allow you to explore the finished implementation and experiment with the functionality right away.
 
 [[what-we-are-going-to-build]]
 == What We Are Going to Build
