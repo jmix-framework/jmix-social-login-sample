@@ -17,7 +17,7 @@ archivesBaseName = 'jmix-social-login-sample'
 repositories {
     mavenCentral()
     maven {
-        url 'https://global.repo.jmix.io/repository/public'
+        url 'https://nexus.jmix.io/repository/public'
     }
 }
 
