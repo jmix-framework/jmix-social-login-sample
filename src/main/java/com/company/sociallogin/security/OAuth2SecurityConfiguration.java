@@ -38,11 +38,11 @@ public class OAuth2SecurityConfiguration extends FlowuiVaadinWebSecurity {
     // end::class[]
     // tag::configure[]
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
+    protected void configureJmixSpecifics(HttpSecurity http) throws Exception {
+        super.configureJmixSpecifics(http);
         http.oauth2Login(configurer ->
                 configurer
-                        .loginPage(getLoginPath())
+                        .loginPage("/login")
                         .userInfoEndpoint(userInfoEndpointConfig ->
                                 userInfoEndpointConfig
                                         .userService(oauth2UserService())

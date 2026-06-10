@@ -199,7 +199,7 @@ The `UnconstrainedDataManager` bean should be used instead of the `DataManager` 
 
 Let's take a closer look at the different parts of the configuration.
 
-The `configure(HttpSecurity http)` method is an entry point to the security settings configuration. It defines the OAuth2 login process by setting the login page, handling user data from the authentication provider, and managing the post-login behavior:
+The `configureJmixSpecifics(HttpSecurity http)` method adds application-specific settings on top of the standard Jmix security configuration. It defines the OAuth2 login process by setting the login page, handling user data from the authentication provider, and managing the post-login behavior:
 
 [source,java,indent=0]
 ----
@@ -215,7 +215,7 @@ include::example$src/main/java/com/company/sociallogin/security/OAuth2SecurityCo
 
 The `oauth2UserService()` and `oidcUserService()` methods are responsible for mapping user information returned by the authentication service to your application’s `User` entity.
 
-The `oidcUserService()` method handles GitHub users:
+The `oauth2UserService()` method handles GitHub users:
 
 [source,java,indent=0]
 ----
