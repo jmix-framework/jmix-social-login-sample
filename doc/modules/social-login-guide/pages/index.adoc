@@ -245,7 +245,7 @@ The `getDefaultGrantedAuthorities()` method creates a list of authorities to be 
 include::example$src/main/java/com/company/sociallogin/security/OAuth2SecurityConfiguration.java[tags=getDefaultGrantedAuthorities]
 ----
 
-[modify-login-view]
+[[modify-login-view]]
 == Modify Login View
 
 Open `login-view.xml` descriptor and add login buttons below the `loginForm` element:
