@@ -12,7 +12,6 @@ jmix {
 
 group = 'com.company'
 version = '0.0.1-SNAPSHOT'
-archivesBaseName = 'jmix-social-login-sample'
 
 repositories {
     mavenCentral()
